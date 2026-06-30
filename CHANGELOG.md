@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.6] - 2026-06-29
+
+### Changed
+
+- Image prompt now includes the post content (up to 2000 characters) as visual reference
+
 ## [1.0.5] - 2026-06-29
 
 ### Fixed
@@ -54,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - GitHub-based plugin updater
 - Manual **Check for updates** button on settings page
 
+[1.0.6]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.6
 [1.0.5]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.5
 [1.0.4]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.4
 [1.0.3]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.3

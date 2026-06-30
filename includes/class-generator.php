@@ -91,7 +91,11 @@ class MAPT_Generator {
       return new WP_Error('missing_api_key', __('OpenAI API key is not configured.', 'mestari-ai-post-thumbnails'));
     }
 
-    $prompt = self::build_prompt($post->post_title, self::get_extra_prompt());
+    $prompt = self::build_prompt(
+      $post->post_title,
+      self::get_extra_prompt(),
+      self::get_post_content_for_prompt($post)
+    );
     $image_data = self::request_image($api_key, $prompt);
 
     if (is_wp_error($image_data)) {
@@ -120,7 +124,7 @@ class MAPT_Generator {
     ];
   }
 
-  public static function build_prompt($title, $extra = '') {
+  public static function build_prompt($title, $extra = '', $content = '') {
     $parts = [
       sprintf(
         'Create a professional blog featured image for an article titled "%s".',
@@ -134,11 +138,40 @@ class MAPT_Generator {
       ),
     ];
 
+    if ($content !== '') {
+      $parts[] = sprintf(
+        'Use the following article content as visual reference for subject matter and mood (do not render this text in the image): %s',
+        $content
+      );
+    }
+
     if ($extra !== '') {
       $parts[] = wp_strip_all_tags($extra);
     }
 
     return implode(' ', $parts);
+  }
+
+  /**
+   * Strip and truncate post content for the image prompt.
+   */
+  private static function get_post_content_for_prompt(WP_Post $post) {
+    $content = strip_shortcodes($post->post_content);
+    $content = wp_strip_all_tags($content);
+    $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $content = preg_replace('/\s+/u', ' ', $content);
+    $content = trim($content);
+
+    if ($content === '') {
+      return '';
+    }
+
+    $max_chars = 2000;
+    if (mb_strlen($content) > $max_chars) {
+      $content = mb_substr($content, 0, $max_chars) . '…';
+    }
+
+    return $content;
   }
 
   private static function request_image($api_key, $prompt) {
