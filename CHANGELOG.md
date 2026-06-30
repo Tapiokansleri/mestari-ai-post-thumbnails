@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.3] - 2026-06-29
+
+### Fixed
+
+- Removed unsupported `thinking` and `quality` parameters from gpt-image-2 requests
+
 ## [1.0.2] - 2026-06-29
 
 ### Changed
@@ -29,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - GitHub-based plugin updater
 - Manual **Check for updates** button on settings page
 
+[1.0.3]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.3
 [1.0.2]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.2
 [1.0.1]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.1
 [1.0.0]: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails/releases/tag/v1.0.0

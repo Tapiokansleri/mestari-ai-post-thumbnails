@@ -139,8 +139,6 @@ class MAPT_Generator {
       'prompt' => $prompt,
       'n' => 1,
       'size' => MAPT_IMAGE_SIZE,
-      'quality' => 'medium',
-      'thinking' => 'off',
     ];
 
     $response = wp_remote_post('https://api.openai.com/v1/images/generations', [
