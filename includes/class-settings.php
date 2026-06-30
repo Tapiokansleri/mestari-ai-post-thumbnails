@@ -80,7 +80,7 @@ class MAPT_Settings {
     <div class="wrap mapt-wrap">
       <h1><?php esc_html_e('Mestari AI Post Thumbnails', 'mestari-ai-post-thumbnails'); ?></h1>
       <p class="description">
-        <?php esc_html_e('Generate 1000×625 featured images (400:250 ratio) from post titles using OpenAI DALL·E 3.', 'mestari-ai-post-thumbnails'); ?>
+        <?php esc_html_e('Generate 1000×625 featured images (400:250 ratio) from post titles using OpenAI gpt-image-2.', 'mestari-ai-post-thumbnails'); ?>
       </p>
 
       <div class="mapt-panel mapt-panel--updates">

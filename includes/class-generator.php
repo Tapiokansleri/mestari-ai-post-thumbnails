@@ -135,10 +135,12 @@ class MAPT_Generator {
 
   private static function request_image($api_key, $prompt) {
     $payload = [
-      'model' => 'gpt-image-1',
+      'model' => MAPT_IMAGE_MODEL,
       'prompt' => $prompt,
       'n' => 1,
-      'size' => '1536x1024',
+      'size' => MAPT_IMAGE_SIZE,
+      'quality' => 'medium',
+      'thinking' => 'off',
     ];
 
     $response = wp_remote_post('https://api.openai.com/v1/images/generations', [

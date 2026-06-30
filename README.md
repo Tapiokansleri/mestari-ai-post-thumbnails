@@ -1,12 +1,12 @@
 # Mestari AI Post Thumbnails
 
-WordPress plugin that generates blog featured images from post titles using the [OpenAI Images API](https://platform.openai.com/docs/guides/images) (DALL·E 3).
+WordPress plugin that generates blog featured images from post titles using the [OpenAI Images API](https://developers.openai.com/api/docs/models/gpt-image-2) (`gpt-image-2`).
 
 Repository: [github.com/Tapiokansleri/mestari-ai-post-thumbnails](https://github.com/Tapiokansleri/mestari-ai-post-thumbnails)
 
 ## Features
 
-- Generate **1000×625 px** featured images (400:250 ratio) from a post title using OpenAI **gpt-image-1**
+- Generate **1000×625 px** featured images (400:250 ratio) from a post title using OpenAI **gpt-image-2**
 - Settings page for your **OpenAI API key**
 - **Extra prompt** field for brand/style instructions on every image
 - Lists published posts **missing a featured image** with one-click generation
