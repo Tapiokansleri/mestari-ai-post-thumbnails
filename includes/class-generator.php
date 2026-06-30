@@ -51,6 +51,10 @@ class MAPT_Generator {
   }
 
   public static function ajax_generate() {
+    if (function_exists('set_time_limit')) {
+      set_time_limit(300);
+    }
+
     check_ajax_referer('mapt_admin', 'nonce');
 
     if (!current_user_can('manage_options')) {
@@ -99,12 +103,16 @@ class MAPT_Generator {
       return $attachment_id;
     }
 
-    $resized = self::resize_attachment($attachment_id);
-    if (is_wp_error($resized)) {
-      return $resized;
+    $thumbnail_set = set_post_thumbnail($post_id, $attachment_id);
+    if (!$thumbnail_set) {
+      update_post_meta($post_id, '_thumbnail_id', $attachment_id);
+      clean_post_cache($post_id);
     }
 
-    set_post_thumbnail($post_id, $attachment_id);
+    $resized = self::resize_attachment($attachment_id);
+    if (is_wp_error($resized)) {
+      error_log('[MAPT] Resize skipped: ' . $resized->get_error_message());
+    }
 
     return [
       'attachment_id' => $attachment_id,
@@ -178,12 +186,24 @@ class MAPT_Generator {
     return new WP_Error('api_empty', __('OpenAI returned no image URL or data.', 'mestari-ai-post-thumbnails'));
   }
 
+  private static function attachment_filename(WP_Post $post) {
+    $slug = $post->post_name ?: sanitize_title($post->post_title);
+    $slug = sanitize_file_name($slug);
+
+    if ($slug === '') {
+      $slug = 'post-' . $post->ID;
+    }
+
+    return $slug . '-featured-' . time() . '.png';
+  }
+
   private static function save_to_media_library($image_data, WP_Post $post) {
     require_once ABSPATH . 'wp-admin/includes/file.php';
     require_once ABSPATH . 'wp-admin/includes/media.php';
     require_once ABSPATH . 'wp-admin/includes/image.php';
 
-    $filename = sanitize_file_name('ai-thumb-' . $post->ID . '-' . time() . '.png');
+    $title = wp_strip_all_tags($post->post_title);
+    $filename = self::attachment_filename($post);
 
     if ($image_data['type'] === 'url') {
       $tmp = download_url($image_data['value'], 120);
@@ -212,18 +232,20 @@ class MAPT_Generator {
       'tmp_name' => $tmp,
     ];
 
-    $attachment_id = media_handle_sideload(
-      $file_array,
-      $post->ID,
-      sprintf(__('AI thumbnail for: %s', 'mestari-ai-post-thumbnails'), $post->post_title)
-    );
+    $attachment_id = media_handle_sideload($file_array, $post->ID, $title);
 
     if (is_wp_error($attachment_id)) {
       @unlink($tmp);
       return $attachment_id;
     }
 
-    update_post_meta($attachment_id, '_wp_attachment_image_alt', $post->post_title);
+    wp_update_post([
+      'ID' => $attachment_id,
+      'post_title' => $title,
+      'post_name' => sanitize_title($title) . '-' . $post->ID,
+    ]);
+
+    update_post_meta($attachment_id, '_wp_attachment_image_alt', $title);
 
     return $attachment_id;
   }
@@ -263,6 +285,12 @@ class MAPT_Generator {
     $saved = $editor->save($file);
     if (is_wp_error($saved)) {
       return $saved;
+    }
+
+    $saved_file = $saved['path'] ?? $file;
+    if ($saved_file !== $file && file_exists($saved_file)) {
+      update_attached_file($attachment_id, $saved_file);
+      $file = $saved_file;
     }
 
     wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $file));

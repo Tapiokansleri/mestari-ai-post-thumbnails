@@ -62,6 +62,7 @@ class MAPT_Settings {
       'generate' => __('Generate thumbnail', 'mestari-ai-post-thumbnails'),
       'done' => __('Done', 'mestari-ai-post-thumbnails'),
       'error' => __('Error', 'mestari-ai-post-thumbnails'),
+      'invalidResponse' => __('The server returned an unexpected response. If the image was created, refresh this page to check.', 'mestari-ai-post-thumbnails'),
       'checkingUpdates' => __('Checking for updates…', 'mestari-ai-post-thumbnails'),
       'checkUpdates' => __('Check for updates', 'mestari-ai-post-thumbnails'),
       'installUpdate' => __('Install update', 'mestari-ai-post-thumbnails'),
