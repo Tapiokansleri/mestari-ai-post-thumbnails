@@ -1,6 +1,16 @@
 (function () {
   'use strict';
 
+  function parseJsonResponse(res, fallbackMessage) {
+    return res.text().then(function (text) {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        throw new Error(fallbackMessage || maptAdmin.error);
+      }
+    });
+  }
+
   document.querySelectorAll('.mapt-generate-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var postId = btn.getAttribute('data-post-id');
@@ -33,7 +43,7 @@
         body: body.toString(),
       })
         .then(function (res) {
-          return res.json();
+          return parseJsonResponse(res, maptAdmin.invalidResponse);
         })
         .then(function (json) {
           if (!json.success) {
@@ -91,7 +101,7 @@
         body: body.toString(),
       })
         .then(function (res) {
-          return res.json();
+          return parseJsonResponse(res, maptAdmin.error);
         })
         .then(function (json) {
           if (!json.success) {
