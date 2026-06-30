@@ -1,0 +1,57 @@
+.mapt-wrap .mapt-settings-form,
+.mapt-wrap .mapt-panel {
+  max-width: 720px;
+}
+
+.mapt-panel {
+  background: #fff;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 16px 0 24px;
+}
+
+.mapt-panel h2 {
+  margin-top: 0;
+}
+
+.mapt-missing-table {
+  max-width: 960px;
+}
+
+.mapt-missing-table td {
+  vertical-align: middle;
+}
+
+.mapt-status--loading,
+.mapt-update-status--loading {
+  color: #646970;
+  font-style: italic;
+}
+
+.mapt-status--success,
+.mapt-update-status--success {
+  color: #008a20;
+}
+
+.mapt-status--error,
+.mapt-update-status--error {
+  color: #b32d2e;
+}
+
+.mapt-preview {
+  display: inline-block;
+  margin-left: 8px;
+  border-radius: 4px;
+  vertical-align: middle;
+  object-fit: cover;
+}
+
+.mapt-done-label {
+  vertical-align: middle;
+}
+
+.mapt-update-status .button {
+  margin-left: 8px;
+  vertical-align: middle;
+}

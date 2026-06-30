@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build plugin ZIP
+        run: |
+          mkdir -p build/mestari-ai-post-thumbnails
+          rsync -a ./ build/mestari-ai-post-thumbnails/ \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'build' \
+            --exclude '*.zip'
+          test -f build/mestari-ai-post-thumbnails/mestari-ai-post-thumbnails.php
+          cd build && zip -r ../mestari-ai-post-thumbnails.zip mestari-ai-post-thumbnails
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: mestari-ai-post-thumbnails.zip
+          generate_release_notes: true
