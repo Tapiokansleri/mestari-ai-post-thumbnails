@@ -3,7 +3,7 @@
  * Plugin Name: Mestari AI Post Thumbnails
  * Plugin URI: https://github.com/Tapiokansleri/mestari-ai-post-thumbnails
  * Description: Generate featured images from post titles using the OpenAI Images API.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Tapio Kansleri
  * Author URI: https://github.com/Tapiokansleri
  * Text Domain: mestari-ai-post-thumbnails
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
   exit;
 }
 
-define('MAPT_VERSION', '1.0.0');
+define('MAPT_VERSION', '1.0.1');
 define('MAPT_PLUGIN_FILE', __FILE__);
 define('MAPT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MAPT_PLUGIN_BASENAME', plugin_basename(__FILE__));

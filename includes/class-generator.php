@@ -88,13 +88,13 @@ class MAPT_Generator {
     }
 
     $prompt = self::build_prompt($post->post_title, self::get_extra_prompt());
-    $image_url = self::request_image($api_key, $prompt);
+    $image_data = self::request_image($api_key, $prompt);
 
-    if (is_wp_error($image_url)) {
-      return $image_url;
+    if (is_wp_error($image_data)) {
+      return $image_data;
     }
 
-    $attachment_id = self::download_to_media_library($image_url, $post);
+    $attachment_id = self::save_to_media_library($image_data, $post);
     if (is_wp_error($attachment_id)) {
       return $attachment_id;
     }
@@ -134,19 +134,20 @@ class MAPT_Generator {
   }
 
   private static function request_image($api_key, $prompt) {
+    $payload = [
+      'model' => 'gpt-image-1',
+      'prompt' => $prompt,
+      'n' => 1,
+      'size' => '1536x1024',
+    ];
+
     $response = wp_remote_post('https://api.openai.com/v1/images/generations', [
       'timeout' => 120,
       'headers' => [
         'Authorization' => 'Bearer ' . $api_key,
         'Content-Type' => 'application/json',
       ],
-      'body' => wp_json_encode([
-        'model' => 'dall-e-3',
-        'prompt' => $prompt,
-        'n' => 1,
-        'size' => '1792x1024',
-        'response_format' => 'url',
-      ]),
+      'body' => wp_json_encode($payload),
     ]);
 
     if (is_wp_error($response)) {
@@ -161,25 +162,50 @@ class MAPT_Generator {
       return new WP_Error('api_error', $message);
     }
 
-    $url = $body['data'][0]['url'] ?? '';
-    if ($url === '') {
-      return new WP_Error('api_empty', __('OpenAI returned no image URL.', 'mestari-ai-post-thumbnails'));
+    $item = $body['data'][0] ?? null;
+    if (!is_array($item)) {
+      return new WP_Error('api_empty', __('OpenAI returned no image data.', 'mestari-ai-post-thumbnails'));
     }
 
-    return $url;
+    if (!empty($item['url'])) {
+      return ['type' => 'url', 'value' => $item['url']];
+    }
+
+    if (!empty($item['b64_json'])) {
+      return ['type' => 'b64', 'value' => $item['b64_json']];
+    }
+
+    return new WP_Error('api_empty', __('OpenAI returned no image URL or data.', 'mestari-ai-post-thumbnails'));
   }
 
-  private static function download_to_media_library($url, WP_Post $post) {
+  private static function save_to_media_library($image_data, WP_Post $post) {
     require_once ABSPATH . 'wp-admin/includes/file.php';
     require_once ABSPATH . 'wp-admin/includes/media.php';
     require_once ABSPATH . 'wp-admin/includes/image.php';
 
-    $tmp = download_url($url, 120);
-    if (is_wp_error($tmp)) {
-      return $tmp;
-    }
-
     $filename = sanitize_file_name('ai-thumb-' . $post->ID . '-' . time() . '.png');
+
+    if ($image_data['type'] === 'url') {
+      $tmp = download_url($image_data['value'], 120);
+      if (is_wp_error($tmp)) {
+        return $tmp;
+      }
+    } else {
+      $decoded = base64_decode($image_data['value'], true);
+      if ($decoded === false) {
+        return new WP_Error('invalid_image', __('Could not decode image data from OpenAI.', 'mestari-ai-post-thumbnails'));
+      }
+
+      $tmp = wp_tempnam($filename);
+      if (!$tmp) {
+        return new WP_Error('temp_file', __('Could not create a temporary file.', 'mestari-ai-post-thumbnails'));
+      }
+
+      if (file_put_contents($tmp, $decoded) === false) {
+        @unlink($tmp);
+        return new WP_Error('temp_file', __('Could not write image to a temporary file.', 'mestari-ai-post-thumbnails'));
+      }
+    }
 
     $file_array = [
       'name' => $filename,

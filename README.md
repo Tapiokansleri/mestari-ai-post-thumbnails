@@ -6,7 +6,7 @@ Repository: [github.com/Tapiokansleri/mestari-ai-post-thumbnails](https://github
 
 ## Features
 
-- Generate **1000×625 px** featured images (400:250 ratio) from a post title
+- Generate **1000×625 px** featured images (400:250 ratio) from a post title using OpenAI **gpt-image-1**
 - Settings page for your **OpenAI API key**
 - **Extra prompt** field for brand/style instructions on every image
 - Lists published posts **missing a featured image** with one-click generation
